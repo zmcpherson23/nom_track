@@ -1,9 +1,49 @@
 import dateparser
+import google
+import re
 import requests
 import urllib.parse
 
 from bs4 import BeautifulSoup
 from nom_track_app.app import app, cache
+
+
+def find_yelp_id(truck_name):
+    """Get the yelp business id from a truck name
+
+    :truck_name: string representing the name of a truck
+
+    :return: None if no yelp id was found
+             str representing the yelp id
+    """
+    known_yelp_ids = {
+        'cousins maine lobster 1':
+            'cousins-maine-lobster-los-angeles',
+        'the original grilled cheese truck':
+            'the-grilled-cheese-truck-los-angeles',
+        'vchos':
+            'vchos-truck-los-angeles',
+        'phantom food truck':
+            'phantom-food-truck-los-angeles-2'
+    }
+
+    yelp_id = known_yelp_ids.get(truck_name.lower())
+    if not yelp_id:
+        # fallback to google
+        google_result = google.search(
+            '{} los angeles site:yelp.com'.format(
+                truck_name))
+        try:
+            url = next(google_result)
+            # looking for somethin like
+            # https://www.yelp.com/biz/vchos-truck-los-angeles
+            match = re.search('yelp.com/biz/(.+)', url)
+            if match:
+                yelp_id = match.group(1)
+        except StopIteration:
+            yelp_id = None
+    return yelp_id
+
 
 # implement caching
 @cache.memoize()
@@ -51,13 +91,15 @@ def get_food_trucks_for_day(date):
             app.logger.debug('truck row="%s"', tr)
             if truck_date == date:
                 app.logger.info('truck for desired date found')
+                truck_name = columns[1].get_text().strip()
                 items.append({
-                    'name': columns[1].get_text(),
+                    'name': truck_name,
                     'date': truck_date.isoformat(),
                     'type': 'hh',
                     'menu': columns[2].find('a').get('href'),
                     'website': 'http://example.com/TODO',
                     'yelp_info': {
+                        "id": find_yelp_id(truck_name),
                         "rating": "TODO",
                         "number_of_reviews": "TODO",
                         "cost": "TODO"
