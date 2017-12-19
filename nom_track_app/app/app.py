@@ -7,7 +7,7 @@ from flask import Response, request, jsonify
 
 from nom_track_app.app import app
 from .slack import get_today
-from .utils import get_food_trucks_for_day
+from .utils import get_food_info_for_day
 
 
 @app.before_first_request
@@ -54,7 +54,7 @@ def list_today_options():
     """
     app.logger.info("Processing /api/today request")
     today = datetime.now().date()
-    data = get_food_trucks_for_day(today)
+    data = get_food_info_for_day(today)
     resp = Response(json.dumps(data))
     resp.headers['Content-Type'] = 'application/json'
     return resp

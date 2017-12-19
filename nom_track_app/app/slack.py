@@ -1,9 +1,10 @@
 import datetime
-from .utils import get_food_trucks_for_day
+from .utils import get_food_info_for_day
+from nom_track_app.app import app
 
 def get_today():
-    today = datetime.datetime.now()
-    data = get_food_trucks_for_day(today)
+    today = datetime.datetime.now().date()
+    data = get_food_info_for_day(today)
     text = food_sources_to_slack_text(data)
 
     response_dict = {
@@ -14,6 +15,7 @@ def get_today():
     return response_dict
 
 def food_sources_to_slack_text(data):
+    app.logger.info("Grabbing slack text from info data: %s", data)
     date = data['date']
     output_text = "Date: " + date + " \n"
     food_srcs = data['food_sources']
@@ -24,6 +26,5 @@ def food_sources_to_slack_text(data):
         menu = fs['menu']
 
         output_text += type + ": *" + name + "* Menu: " + menu + "\n"
-    print(output_text)
     return output_text
 
