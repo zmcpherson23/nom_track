@@ -7,7 +7,7 @@ from flask import Response, request, redirect, jsonify, url_for
 
 from nom_track_app.app import app
 from .slack import get_today
-from .utils import get_food_trucks_for_day, get_fooda_for_day
+from .utils import get_food_info_for_day
 
 
 @app.before_first_request
@@ -50,8 +50,7 @@ def hello_world():
 def list_date_options(ymd):
     app.logger.info("Processing /api/{} request".format(ymd))
     date = datetime.strptime(ymd, '%Y-%m-%d').date()
-    data = get_food_trucks_for_day(date)
-    data.extend(get_fooda_for_day(date))
+    data = get_food_info_for_day(date)
     resp = Response(json.dumps(data))
     resp.headers['Content-Type'] = 'application/json'
     return resp
