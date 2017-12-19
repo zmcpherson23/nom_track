@@ -2,8 +2,8 @@ import json
 import logging
 import sys
 
-from datetime import datetime
-from flask import Response, request, jsonify
+from datetime import datetime, timedelta
+from flask import Response, request, redirect, jsonify, url_for
 
 from nom_track_app.app import app
 from .slack import get_today
@@ -46,18 +46,28 @@ def hello_world():
     return 'Hello World!'
 
 
-@app.route('/api/today', methods=['GET'])
-def list_today_options():
-    """
-    GET to list food trucks of the day.
-    :return: Array of food truck hashes
-    """
-    app.logger.info("Processing /api/today request")
-    today = datetime.now().date()
-    data = get_food_info_for_day(today)
+@app.route('/api/<ymd>', methods=['GET'])
+def list_date_options(ymd):
+    app.logger.info("Processing /api/{} request".format(ymd))
+    date = datetime.strptime(ymd, '%Y-%m-%d').date()
+    data = get_food_info_for_day(date)
     resp = Response(json.dumps(data))
     resp.headers['Content-Type'] = 'application/json'
     return resp
+
+
+@app.route('/api/today', methods=['GET'])
+def list_today_options():
+    app.logger.info("Processing /api/today request")
+    today = datetime.now().date()
+    return redirect(url_for('list_date_options', ymd=today.isoformat()))
+
+
+@app.route('/api/tomorrow', methods=['GET'])
+def list_tomorrow_options():
+    app.logger.info("Processing /api/tomorrow request")
+    tomorrow = datetime.now().date() + timedelta(days=1)
+    return redirect(url_for('list_date_options', ymd=tomorrow.isoformat()))
 
 
 @app.route('/slack/today', methods=['POST'])
