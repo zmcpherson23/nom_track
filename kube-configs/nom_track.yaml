@@ -1,0 +1,25 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nom-track-app
+  namespace: mt-cloudtech
+  labels:
+    app: nom-track-app
+spec:
+  replicas: 10
+  template:
+    metadata:
+      labels:
+        app: nom-track-app
+    spec:
+      containers:
+      - name: nom-track-app
+        image:
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: 8000
+        env:
+        volumeMounts:
+      restartPolicy: Always

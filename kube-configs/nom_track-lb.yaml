@@ -1,0 +1,16 @@
+---
+  kind: Service
+  apiVersion: v1
+  metadata:
+    labels:
+      app: nom-track-app
+    name: nom-track-app
+    namespace: mt-cloudtech
+  spec:
+    type: LoadBalancer
+    ports:
+      - name: http
+        port: 5023
+        targetPort: 5023
+    selector:
+      app: nom-track-app
