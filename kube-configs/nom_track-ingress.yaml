@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: nom-track-app
+  namespace: mt-cloudtech
+  annotations:
+      ingress.kubernetes.io/whitelist-source-range: "0.0.0.0/0"
+spec:
+  rules:
+  - host:
+    http:
+      paths:
+      - path: /api/today
+        backend:
+          serviceName: nom-track-app
+          servicePort: 5023

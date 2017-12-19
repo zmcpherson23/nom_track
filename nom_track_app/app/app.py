@@ -2,16 +2,44 @@ import dateparser
 import json
 import requests
 import urllib.parse
+import logging
+import yaml
+import sys
 
 from bs4 import BeautifulSoup
 from datetime import datetime
-from flask import Flask
+from flask import Flask, Response
+from flask import request
 from flask_cache import Cache
 
 cache = Cache(config={'CACHE_TYPE': 'simple'})
 app = Flask(__name__)
 cache.init_app(app)
 
+
+@app.before_first_request
+def setup_logging():
+    if not app.debug:
+        # In production mode, add log handler to sys.stderr.
+        handler = logging.StreamHandler(sys.stdout)
+        handler.setLevel(logging.INFO)
+
+        # create a logging format
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        handler.setFormatter(formatter)
+
+        app.logger.addHandler(handler)
+        app.logger.setLevel(logging.INFO)
+
+@app.before_request
+def log_pre_request():
+    app.logger.info("recieved %s  %s    client addr: %s", request.method, request.path, request.remote_addr)
+
+@app.after_request
+def log_post_request(response):
+    app.logger.info("handled  %s  %s    client addr: %s %s", request.method, request.path,
+                                                    request.remote_addr, response.status_code)
+    return response
 
 # implement caching
 @cache.memoize()
@@ -86,9 +114,12 @@ def list_today_options():
     GET to list food trucks of the day.
     :return: Array of food truck hashes
     """
+    app.logger.info("Processing /api/today request")
     today = datetime.now().date()
     data = get_food_trucks_for_day(today)
-    return json.dumps(data)
+    resp = Response(json.dumps(data))
+    resp.headers['Content-Type'] = 'application/json'
+    return resp
 
 
 if __name__ == '__main__':
