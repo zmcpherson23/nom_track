@@ -1,2 +1,5 @@
+beautifulsoup4
+dateparser==0.6.0
 flask==0.12.2
+html5lib==1.0.1
 requests==2.18.4
