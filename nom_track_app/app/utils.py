@@ -46,14 +46,15 @@ def find_yelp_id(truck_name):
             yelp_id = None
     return yelp_id
 
+
 def get_food_info_for_day(date):
     info_dict = {"date": date.isoformat()}
     food_sources = get_food_trucks_for_day(date)
-    # TODO: after bartle implements get fooda
-    # food_sources.extend(get_fooda_for_day(date))
+    food_sources.extend(get_fooda_for_day(date))
     info_dict["food_sources"] = food_sources
 
     return info_dict
+
 
 @cache.memoize()
 def get_fooda_for_day(date):
