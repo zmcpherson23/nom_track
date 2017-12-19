@@ -3,7 +3,6 @@ import json
 import requests
 import urllib.parse
 import logging
-import yaml
 import sys
 
 from bs4 import BeautifulSoup
