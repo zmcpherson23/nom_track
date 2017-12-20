@@ -3,7 +3,7 @@ import logging
 import sys
 
 from datetime import datetime, timedelta
-from flask import Response, request, redirect, jsonify, url_for
+from flask import Response, request, redirect, jsonify, url_for, render_template
 
 from nom_track_app.app import app
 from .slack import slack_get_info_for_date
@@ -39,11 +39,6 @@ def log_post_request(response):
         request.method, request.path,
         request.remote_addr, response.status_code)
     return response
-
-
-@app.route('/')
-def hello_world():
-    return 'Hello World!'
 
 
 @app.route('/api/<ymd>', methods=['GET'])
@@ -86,3 +81,10 @@ def slack_list_today_options():
         date = date + timedelta(days=1)
 
     return jsonify(slack_get_info_for_date(date))
+
+
+# Homepage
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def catch_all(path):
+    return render_template("index.html")
