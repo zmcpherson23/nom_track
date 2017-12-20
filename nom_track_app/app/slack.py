@@ -25,7 +25,10 @@ def food_sources_to_slack_text(data):
         type = fs['type']
         name = fs['name']
         menu = fs['menu']
+        rating = fs['yelp_info']['rating']
 
-        output_text += type + ": *" + name + "* <" + menu + "|Menu>\n"
+        output_text += type + ": *" + name + "* <" + menu + "|Menu> Rating: " + str(rating) + "\n"
+
     return output_text
+
 
