@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from flask import Response, request, redirect, jsonify, url_for
 
 from nom_track_app.app import app
-from .slack import get_today
+from .slack import slack_get_info_for_date
 from .utils import get_food_info_for_day
 
 
@@ -70,7 +70,7 @@ def list_tomorrow_options():
     return redirect(url_for('list_date_options', ymd=tomorrow.isoformat()))
 
 
-@app.route('/slack/today', methods=['POST'])
+@app.route('/slack', methods=['POST'])
 def slack_list_today_options():
     """
     GET to list food trucks of the day.
@@ -78,4 +78,11 @@ def slack_list_today_options():
     """
     app.logger.info("Processing /slack/today request")
 
-    return jsonify(get_today())
+    form_data = request.form
+    text = form_data.get('text')
+    date = datetime.now().date()
+
+    if text == 'tomorrow':
+        date = date + timedelta(days=1)
+
+    return jsonify(slack_get_info_for_date(date))
