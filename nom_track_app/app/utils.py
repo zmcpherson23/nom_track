@@ -156,8 +156,8 @@ def get_fooda(date):
             'date': date.isoformat(),
             'type': 'Fooda',
             'hours': {
-                'open': datetime.combine(date, time(11, 30)).isoformat(),
-                'close': datetime.combine(date, time(13, 30)).isoformat()
+                'open': '11:30 am',
+                'close': '1:30 pm'
             },
             'menu': menu,
             'yelp_info': {
@@ -225,8 +225,8 @@ def get_food_truck_data(date):
                     'type': 'Food Truck',
                     'menu': menu,
                     'hours': {
-                        'open': datetime.combine(date, time(11)).isoformat(),
-                        'close': datetime.combine(date, time(14)).isoformat()
+                        'open': '11 am',
+                        'close': '2 pm'
                     },
                     'yelp_info': {
                         "id": yelp_data.get("id", "Not Available"),
