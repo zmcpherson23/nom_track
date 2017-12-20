@@ -7,7 +7,7 @@ from flask import Response, request, redirect, jsonify, url_for, render_template
 
 from nom_track_app.app import app
 from .slack import slack_get_info_for_date
-from .utils import get_food_info_for_day
+from .utils import get_food_info_for_today
 
 
 @app.before_first_request
@@ -45,7 +45,7 @@ def log_post_request(response):
 def list_date_options(ymd):
     app.logger.info("Processing /api/{} request".format(ymd))
     date = datetime.strptime(ymd, '%Y-%m-%d').date()
-    data = get_food_info_for_day(date)
+    data = get_food_info_for_today(date)
     resp = Response(json.dumps(data))
     resp.headers['Content-Type'] = 'application/json'
     return resp
@@ -79,8 +79,9 @@ def slack_list_today_options():
 
     if text == 'tomorrow':
         date = date + timedelta(days=1)
-
-    return jsonify(slack_get_info_for_date(date))
+        return jsonify(slack_get_info_for_date(date, True))
+    else:
+        return jsonify(slack_get_info_for_date(date, False))
 
 
 # Homepage
