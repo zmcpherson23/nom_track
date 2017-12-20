@@ -13,7 +13,7 @@
               img-alt="Image"
               img-top
               tag="article"
-              style="max-width: 24rem;"
+              style="max-width: 24rem; min-height: 30rem"
               class="mb-2">
         <div class="card-text">
           {{ foodOption.yelp_info.cost }}
