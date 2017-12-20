@@ -11,6 +11,7 @@ from datetime import datetime, time
 
 from bs4 import BeautifulSoup
 from nom_track_app.app import app, cache
+from nom_track_app.app.models import User, UserRating
 
 
 def load_config():
@@ -222,3 +223,13 @@ def get_food_trucks_for_day(date):
                 })
 
     return items
+
+def rate_food_source(user_id, food_source, rating):
+    if rating < 1 or rating > 5:
+        raise ValueError("Rating must be between 1 and 5")
+
+    user = User.query.get(user_id)
+    if not user:
+        user = User(id=user_id)
+    rating = user.rate_food(food_source,rating)
+    return rating

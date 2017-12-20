@@ -5,8 +5,8 @@ import sys
 from datetime import datetime, timedelta
 from flask import Response, request, redirect, jsonify, url_for, render_template
 
-from nom_track_app.app import app
-from .slack import slack_get_info_for_date
+from nom_track_app.app import app, models
+from .slack import slack_get_info_for_date, slack_rate_food
 from .utils import get_food_info_for_day
 
 
@@ -74,8 +74,21 @@ def slack_list_today_options():
     app.logger.info("Processing /slack/today request")
 
     form_data = request.form
+    app.logger.info("Form data: %s", form_data)
     text = form_data.get('text')
     date = datetime.now().date()
+
+    if text == 'mothatrucka':
+        return jsonify({"text": "https://i.imgur.com/trUUslk.jpg", "response_type": "in_channel"})
+
+    if text.split() and text.split()[0] == 'rate':
+        user_id = form_data.get('user_id')
+        args = text.split(maxsplit=2)
+        rating = args[1]
+        food_source = args[2]
+
+        return jsonify(slack_rate_food(user_id, food_source, rating))
+
 
     if text == 'tomorrow':
         date = date + timedelta(days=1)
