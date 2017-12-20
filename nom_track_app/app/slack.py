@@ -1,6 +1,7 @@
 from .utils import get_food_info_for_day
 from nom_track_app.app import app
 
+
 def slack_get_info_for_date(date):
     data = get_food_info_for_day(date)
     text = food_sources_to_slack_text(data)
@@ -12,6 +13,7 @@ def slack_get_info_for_date(date):
     }
 
     return response_dict
+
 
 def food_sources_to_slack_text(data):
     app.logger.info("Grabbing slack text from info data: %s", data)
