@@ -15,7 +15,7 @@ from nom_track_app.app import app, cache
 
 def load_config():
     dir = os.path.dirname(__file__)
-    config_path = os.path.join(Path(dir).parent, "config.yaml")
+    config_path = os.path.join(str(Path(dir).parent), "config.yaml")
     with open(config_path, 'r') as stream:
         try:
             return yaml.load(stream)
@@ -63,6 +63,11 @@ def find_yelp_id(truck_name):
 
 
 def fetch_yelp_data(yelp_id):
+    """Returns yelp business api data
+
+    See this for the format of the response.
+    https://www.yelp.com/developers/documentation/v3/business
+    """
     config_data = load_config()
 
     yelp_api_url = "https://api.yelp.com/v3/businesses/{}".format(yelp_id)
@@ -76,6 +81,7 @@ def fetch_yelp_data(yelp_id):
         yelp_response = requests.get(yelp_api_url,
                                      timeout=240,
                                      headers=headers)
+        app.logger.info(yelp_response.json())
         return yelp_response.json()
     except ConnectionError as ex:
         app.logger.exception(ex)
@@ -150,7 +156,10 @@ def get_fooda_for_day(date):
                 "id": yelp_data.get("id", "Not Available"),
                 "rating": yelp_data.get("rating", "Not Available"),
                 "number_of_reviews": yelp_data.get("review_count", "Not Available"),
-                "cost": yelp_data.get("price", "Not Available")
+                "cost": yelp_data.get("price", "Not Available"),
+                "url": yelp_data.get("url", ""),
+                "image_url": yelp_data.get("image_url", ""),
+                "phone": yelp_data.get("phone", "Not Available")
             }
         })
 
@@ -217,7 +226,10 @@ def get_food_trucks_for_day(date):
                         "id": yelp_data.get("id", "Not Available"),
                         "rating": yelp_data.get("rating", "Not Available"),
                         "number_of_reviews": yelp_data.get("review_count", "Not Available"),
-                        "cost": yelp_data.get("price", "Not Available")
+                        "cost": yelp_data.get("price", "Not Available"),
+                        "url": yelp_data.get("url", ""),
+                        "image_url": yelp_data.get("image_url", ""),
+                        "phone": yelp_data.get("phone", "Not Available")
                     }
                 })
 
