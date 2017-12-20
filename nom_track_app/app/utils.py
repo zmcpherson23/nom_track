@@ -3,11 +3,24 @@ import google
 import re
 import requests
 import urllib.parse
+import yaml
+import os
+from pathlib import Path
 
 from datetime import datetime, time
 
 from bs4 import BeautifulSoup
 from nom_track_app.app import app, cache
+
+
+def load_config():
+    dir = os.path.dirname(__file__)
+    config_path = os.path.join(Path(dir).parent, "config.yaml")
+    with open(config_path, 'r') as stream:
+        try:
+            return yaml.load(stream)
+        except yaml.YAMLError as exc:
+            app.logger.exception(exc)
 
 
 def find_yelp_id(truck_name):
@@ -47,6 +60,26 @@ def find_yelp_id(truck_name):
         except StopIteration:
             yelp_id = None
     return yelp_id
+
+
+def fetch_yelp_data(yelp_id):
+    config_data = load_config()
+
+    yelp_api_url = "https://api.yelp.com/v3/businesses/{}".format(yelp_id)
+
+    headers = {
+                    "Authorization": "Bearer {}".format(config_data.get('yelp_api_key')),
+                    "Accept": "application/json"
+              }
+
+    try:
+        yelp_response = requests.get(yelp_api_url,
+                                     timeout=240,
+                                     headers=headers)
+        return yelp_response.json()
+    except ConnectionError as ex:
+        app.logger.exception(ex)
+        return {}
 
 
 def get_food_info_for_day(date):
@@ -102,6 +135,7 @@ def get_fooda_for_day(date):
     events = soup.find_all('a', class_='js-vendor-tile')
     for event in events:
         name = event.find('div', class_='myfooda-event__name').get_text()
+        yelp_data = fetch_yelp_data(find_yelp_id(name))
         menu = event.get('href')
         items.append({
             'name': name,
@@ -113,10 +147,10 @@ def get_fooda_for_day(date):
             },
             'menu': menu,
             'yelp_info': {
-                "id": find_yelp_id(name),
-                "rating": "TODO",
-                "number_of_reviews": "TODO",
-                "cost": "TODO"
+                "id": yelp_data.get("id", "Not Available"),
+                "rating": yelp_data.get("rating", "Not Available"),
+                "number_of_reviews": yelp_data.get("review_count", "Not Available"),
+                "cost": yelp_data.get("price", "Not Available")
             }
         })
 
@@ -168,6 +202,7 @@ def get_food_trucks_for_day(date):
             if truck_date == date:
                 app.logger.info('truck for desired date found')
                 name = columns[1].get_text().strip()
+                yelp_data = fetch_yelp_data(find_yelp_id(name))
                 menu = columns[2].find('a').get('href')
                 items.append({
                     'name': name,
@@ -179,10 +214,10 @@ def get_food_trucks_for_day(date):
                         'close': datetime.combine(date, time(14)).isoformat()
                     },
                     'yelp_info': {
-                        "id": find_yelp_id(name),
-                        "rating": "TODO",
-                        "number_of_reviews": "TODO",
-                        "cost": "TODO"
+                        "id": yelp_data.get("id", "Not Available"),
+                        "rating": yelp_data.get("rating", "Not Available"),
+                        "number_of_reviews": yelp_data.get("review_count", "Not Available"),
+                        "cost": yelp_data.get("price", "Not Available")
                     }
                 })
 

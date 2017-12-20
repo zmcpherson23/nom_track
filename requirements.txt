@@ -6,4 +6,5 @@ html5lib==1.0.1
 requests==2.18.4
 Flask-Cache==0.13.1
 requests==2.18.4
+pyaml==17.10.0
 Flask-Cors==3.0.3
