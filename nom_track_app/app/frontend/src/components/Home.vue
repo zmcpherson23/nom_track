@@ -1,9 +1,9 @@
 <template>
   <div>
     <h1>Nom Track</h1>
-    <h4>Your one stop shop for everything lunch around the Howard Hughes Center in Los Angeles</h4>
-    <h4 class="text-info font-weight-bold">{{ todaysFoodOptions.date}}</h4>
-    <h5 class="text-success font-italic">You have xx mins to get food... gogogo</h5>
+    <h4 class="font-italic">Your one stop shop for everything lunch around the Howard Hughes Center in Los Angeles</h4>
+    <h4 class="mt-md-5 text-info font-weight-bold">Food Options for: {{ todaysFoodOptions.date}}</h4>
+
     <div class="mt-3">
       <b-card-group deck class="mb-3 mx-auto d-flex justify-content-center">
 
@@ -15,14 +15,19 @@
               tag="article"
               style="max-width: 24rem; min-height: 30rem"
               class="mb-2">
-        <div class="card-text">
-          {{ foodOption.yelp_info.cost }}
-        </div>
-        <div v-if="foodOption.yelp_info.rating" class="card-text">
-          Yelp Rating: {{ foodOption.yelp_info.rating }}
-        </div>
-        <div v-if="foodOption.yelp_info.number_of_reviews" class="card-text">
-          # of Yelp Reviews: {{ foodOption.yelp_info.number_of_reviews }}
+        <div>
+          <div class="card-text">
+            <b>Price Range:</b> {{ foodOption.yelp_info.cost }}
+          </div>
+          <div v-if="foodOption.yelp_info.rating" class="card-text">
+            <b>Yelp Rating:</b> {{ foodOption.yelp_info.rating }}
+          </div>
+          <div v-if="foodOption.yelp_info.number_of_reviews" class="card-text">
+            <b># of Yelp Reviews:</b> {{ foodOption.yelp_info.number_of_reviews }}
+          </div>
+          <div class="card-text">
+            <b>Closes at:</b> {{ foodOption.hours.close }}
+          </div>
         </div>
         <b-button class="mt-2 mb-2" :href="foodOption.menu" variant="primary">Menu</b-button>
         <em slot="footer"> Location: {{ foodOption.type }}</em>
@@ -32,8 +37,8 @@
 
     </div>
     <div>
-      <b-button variant="outline-success" size="lg" class="mt-3 mb-3 mx-3" @click="getPreviousFoodOptions(todaysFoodOptions.date)" title="... is gone!">Previous</b-button>
-      <b-button variant="outline-success" size="lg" class="mt-3 mb-3 mx-3" @click="getNextFoodOptions(todaysFoodOptions.date)" title="... isn't here yet!">Next</b-button>
+      <b-button variant="outline-success" size="lg" class="mt-2 mb-3 mx-3" @click="getPreviousFoodOptions(todaysFoodOptions.date)" title="... is gone!">Previous</b-button>
+      <b-button variant="outline-success" size="lg" class="mt-2 mb-3 mx-3" @click="getNextFoodOptions(todaysFoodOptions.date)" title="... isn't here yet!">Next</b-button>
     </div>
   </div>
 </template>
@@ -50,19 +55,6 @@
     methods: {
 //      created () {
 //        setInterval(() => this.now = new Date, 1000 * 60)
-//      },
-//      getFoodImage () {
-//        const path = `https://lorempixel.com/600/300/food/`
-//        axios.get(path)
-//          .then(response => {
-//            console.log('Food Image ====')
-//            console.log(response)
-//            this.foodImage = response
-//          })
-//          .catch(error => {
-//            console.log('ERROR!!!!!!!!!!!')
-//            console.log(error)
-//          })
 //      },
       getTodaysFoodOptions () {
         this.todaysFoodOptions = this.getTodaysFoodOptionsFromAPI('today')
