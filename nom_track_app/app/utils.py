@@ -4,6 +4,8 @@ import re
 import requests
 import urllib.parse
 
+from datetime import datetime, time
+
 from bs4 import BeautifulSoup
 from nom_track_app.app import app, cache
 
@@ -104,7 +106,11 @@ def get_fooda_for_day(date):
         items.append({
             'name': name,
             'date': date.isoformat(),
-            'type': 'fooda',
+            'type': 'Fooda',
+            'hours': {
+                'open': datetime.combine(date, time(11, 30)).isoformat(),
+                'close': datetime.combine(date, time(13, 30)).isoformat()
+            },
             'menu': menu,
             'yelp_info': {
                 "id": find_yelp_id(name),
@@ -166,8 +172,12 @@ def get_food_trucks_for_day(date):
                 items.append({
                     'name': name,
                     'date': truck_date.isoformat(),
-                    'type': 'hh',
+                    'type': 'Food Truck',
                     'menu': menu,
+                    'hours': {
+                        'open': datetime.combine(date, time(11)).isoformat(),
+                        'close': datetime.combine(date, time(14)).isoformat()
+                    },
                     'yelp_info': {
                         "id": find_yelp_id(name),
                         "rating": "TODO",
