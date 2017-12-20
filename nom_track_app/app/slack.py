@@ -16,6 +16,7 @@ def food_sources_to_slack_attachments(data):
 
     ret = {
         'text': "Food options for {}".format(data.get('date')),
+        'response_type': 'in_channel',
         'attachments': []
     }
 
