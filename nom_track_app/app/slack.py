@@ -1,10 +1,14 @@
-from .utils import get_food_info_for_day
+from .utils import get_food_info_for_today, get_food_info_for_tomorrow
 from nom_track_app.app import app
 
 
-def slack_get_info_for_date(date):
-    data = get_food_info_for_day(date)
-    # text = food_sources_to_slack_text(data)
+def slack_get_info_for_date(date, tomorrow):
+    if tomorrow:
+        data = get_food_info_for_tomorrow(date)
+        text = food_sources_to_slack_text(data)
+    else:
+        data = get_food_info_for_today(date)
+        text = food_sources_to_slack_text(data)
 
     response_dict = food_sources_to_slack_attachments(data)
 

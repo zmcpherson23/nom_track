@@ -87,18 +87,26 @@ def fetch_yelp_data(yelp_id):
         app.logger.exception(ex)
         return {}
 
-
-def get_food_info_for_day(date):
+@cache.memoize()
+def get_food_info_for_today(date):
     info_dict = {"date": date.isoformat()}
-    food_sources = get_food_trucks_for_day(date)
-    food_sources.extend(get_fooda_for_day(date))
+    food_sources = get_food_truck_data(date)
+    food_sources.extend(get_fooda(date))
+    info_dict["food_sources"] = food_sources
+
+    return info_dict
+
+@cache.memoize()
+def get_food_info_for_tomorrow(date):
+    info_dict = {"date": date.isoformat()}
+    food_sources = get_food_truck_data(date)
+    food_sources.extend(get_fooda(date))
     info_dict["food_sources"] = food_sources
 
     return info_dict
 
 
-@cache.memoize()
-def get_fooda_for_day(date):
+def get_fooda(date):
     items = []
 
     app.logger.info('finding fooda events for date="%s"', date)
@@ -166,9 +174,7 @@ def get_fooda_for_day(date):
     return items
 
 
-# implement caching
-@cache.memoize()
-def get_food_trucks_for_day(date):
+def get_food_truck_data(date):
     app.logger.info('finding food truck events for date="%s"', date)
     ft_catering_month_uri = (
         "https://creator.zohopublic.com/greggless"
