@@ -9,7 +9,7 @@
 
     <div v-for="foodOption in todaysFoodOptions.food_sources">
       <b-card :title="foodOption.name"
-              :img-src="foodOption.yelp_info.image_url.replace('/o.jpg', '/348s.jpg') || 'https://lorempixel.com/600/300/food/5/'"
+              :img-src="foodOption.yelp_info.image_url.replace('/o.jpg', '/348s.jpg') || 'https://lorempixel.com/350/350/food/5/'"
               img-alt="Image"
               img-top
               tag="article"
