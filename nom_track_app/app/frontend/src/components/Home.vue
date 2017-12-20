@@ -21,6 +21,9 @@
         <div v-if="foodOption.yelp_info.rating" class="card-text">
           Yelp Rating: {{ foodOption.yelp_info.rating }}
         </div>
+        <div v-if="foodOption.yelp_info.number_of_reviews" class="card-text">
+          # of Yelp Reviews: {{ foodOption.yelp_info.number_of_reviews }}
+        </div>
         <b-button :href="foodOption.menu" variant="primary">Menu</b-button>
         <em slot="footer"> Location: {{ foodOption.type }}</em>
       </b-card>
@@ -65,7 +68,7 @@
         const path = `http://localhost:5000/api/today`
         axios.get(path)
           .then(response => {
-            this.todaysFoodOptions = response.data
+            this.todaysFoodOptions = response.data.food_sources
           })
           .catch(error => {
             console.log('ERROR!!!!!!!!!!!')
