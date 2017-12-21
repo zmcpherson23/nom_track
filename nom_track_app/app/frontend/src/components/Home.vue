@@ -85,7 +85,7 @@
         this.todaysFoodOptions = this.getTodaysFoodOptionsFromAPI(nextDate)
       },
       getTodaysFoodOptionsFromAPI (day) {
-        let path = `http://localhost:5000/api/` + day
+        let path = '/api/' + day
         axios.get(path)
           .then(response => {
             this.todaysFoodOptions = response.data

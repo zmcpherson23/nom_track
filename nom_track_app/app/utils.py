@@ -87,7 +87,7 @@ def fetch_yelp_data(yelp_id):
         app.logger.exception(ex)
         return {}
 
-@cache.memoize()
+@cache.memoize(timeout=86400)
 def get_food_info_for_today(date):
     info_dict = {"date": date.isoformat()}
     food_sources = get_food_truck_data(date)
@@ -96,7 +96,7 @@ def get_food_info_for_today(date):
 
     return info_dict
 
-@cache.memoize()
+@cache.memoize(timeout=86400)
 def get_food_info_for_tomorrow(date):
     info_dict = {"date": date.isoformat()}
     food_sources = get_food_truck_data(date)
