@@ -77,6 +77,9 @@ def slack_list_today_options():
     text = form_data.get('text')
     date = datetime.now().date()
 
+    if text == 'mothatrucka':
+        return jsonify({"text": "https://i.imgur.com/trUUslk.jpg", "response_type": "in_channel"})
+
     if text == 'tomorrow':
         date = date + timedelta(days=1)
         return jsonify(slack_get_info_for_date(date, True))
